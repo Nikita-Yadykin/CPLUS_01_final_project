@@ -5,17 +5,17 @@ class Message
 {
 public:
 
-	Message(const string sender, const string recipient, const string message);
+	Message(const string sender, const string recipient, const string letter);
 	~Message() = default;
 
 	string getSender() const;
 	string getRecipient() const;
-	string getMessage() const;
+	string getLetter() const;
 
 private:
 
 	const string _sender;
 	const string _recipient;
-	const string _message;
+	const string _letter;
 
 };
