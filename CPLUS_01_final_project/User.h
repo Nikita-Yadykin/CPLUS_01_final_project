@@ -8,6 +8,7 @@ class User
 public:
 
 	User(const string login, string password, string name);
+	~User() = default;
 
 	string getLogin() const;
 	string getPassword() const;
