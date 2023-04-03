@@ -9,11 +9,15 @@ int main() {
 	ConsoleChat ConsoleChat;
 
 	ConsoleChat.start();
-
+	
 	while (ConsoleChat.ñhatStarted())
 	{
 		ConsoleChat.startMenu();
-		return 0;
+		
+			while (ConsoleChat.getOnlineUser())
+			{
+				ConsoleChat.chatMenu();
+			}
 	}
 
 	return 0;
