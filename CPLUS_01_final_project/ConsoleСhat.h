@@ -14,7 +14,8 @@ public:
 	void logIn();
 	shared_ptr<User> getOnlineUser() const;
 	void chatMenu();
-
+	void sendMessage();
+	
 private:
 
 	vector<User> _user;
