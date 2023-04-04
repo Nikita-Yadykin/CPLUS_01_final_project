@@ -18,7 +18,7 @@ void ConsoleChat::startMenu()
 
 	cout << "\tПриветствуем в чате!" << endl << endl
 		<< "Для продолжения выберите действие: " << endl << endl
-		<< "1-Зарегестрироваться" << endl
+		<< "1-Зарегистрироваться" << endl
 		<< "2-Войти в чат" << endl
 		<< "3-Выйти из чата" << endl;
 	cin >> action;
@@ -38,7 +38,9 @@ void ConsoleChat::startMenu()
 		break;
 	}
 
-}
+};
+
+
 
 shared_ptr<User> ConsoleChat::getUserByLogin(const string login) const
 {
@@ -49,6 +51,8 @@ shared_ptr<User> ConsoleChat::getUserByLogin(const string login) const
 	}
 	return nullptr;
 }
+
+
 
 shared_ptr<User>  ConsoleChat::getOnlineUser() const
 {
@@ -94,7 +98,52 @@ void ConsoleChat::signUp()
 	_onlineUser = make_shared<User>(user);
 	cout << endl << "Поздравляем! Вы успешно зарегистрированы!" << endl;
 }
+void ConsoleChat::openChat() const
 
+{
+	std::string sender, recipient;
+	std::cout << " -----------chat-------  \n";
+	for (auto& mess : _message)
+	{
+		if (_onlineUser->getLogin() == mess.getSender() || _onlineUser->getLogin() == mess.getRecipient() || mess.getRecipient() == "all")
+		{
+			sender = (_onlineUser->getLogin() == mess.getSender()) ? "me" : getUserByLogin(mess.getSender())->getName();
+
+			if (mess.getRecipient() == "all")
+			{
+				recipient = "all";
+			}
+			else
+			{
+				recipient = (_onlineUser->getLogin() == mess.getRecipient()) ? "me" : getUserByLogin(mess.getRecipient())->getName();
+			}
+			std::cout << "message from " << sender << ": to " << recipient << "\n";
+			std::cout << " - " << mess.getLetter() << " - \n";
+		}
+	}
+	std::cout << "---------------------------\n";
+};
+void ConsoleChat::sendMessage()
+{
+	std::string recipient, text;
+	std::cout << "to (name or all) - ";
+	std::cin >> recipient;
+	std::cout << "text - ";
+	std::cin.ignore();
+	getline(std::cin, text);
+
+	if (!(recipient == "all" || getUserByLogin(recipient))) {
+		std::cout << "error no such user  -- " << recipient << "\n";
+		return;
+	}
+	if (recipient == "all")
+		_message.push_back(Message(_onlineUser->getLogin(), "all", text));
+	else
+		_message.push_back(Message(_onlineUser->getLogin(), getUserByLogin(recipient)->getLogin(), text));
+	std::cout << "message send -  " << recipient << ":\n ";
+
+
+}
 void ConsoleChat::chatMenu()
 {
 	short operation;
@@ -109,11 +158,11 @@ void ConsoleChat::chatMenu()
 		switch (operation)
 		{
 		case 1:
-
+			openChat();
 			break;
 
 		case 2:
-
+			sendMessage();
 			break;
 
 		case 3:
