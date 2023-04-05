@@ -21,17 +21,18 @@ void ConsoleChat::startMenu()
 		<< "Choose an action to continue: \n\n"
 		<< "1-Register\n"
 		<< "2-Enter chat\n"
-		<< "3-Leave the chat" << endl;
+		<< "3-Output the user names\n"
+		<< "4-Leave the chat" << endl;
 	string str;
 	char action;
-	
+
 	cin >> str;
-	
+
 	if (!str.empty())
 		action = '0';
 
-    action = str[0];
-		
+	action = str[0];
+
 	switch (action)
 	{
 	case '1':
@@ -43,6 +44,9 @@ void ConsoleChat::startMenu()
 		logIn();
 		break;
 	case '3':
+		showAllUserNames();
+		break;
+	case '4':
 		_ñhatStarted = false;
 		SetConsoleTextAttribute(hConsole, 15);
 		break;
@@ -88,7 +92,7 @@ void ConsoleChat::logIn()
 		_onlineUser = nullptr;
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, 12);
-		cout << "Invalid login or password, please try again\n"; // Ñðàáàòûâàåò â ëþáîì ñëó÷àå
+		cout << "Invalid login or password, please try again\n";
 		SetConsoleTextAttribute(hConsole, 11);
 	}
 }
@@ -105,12 +109,12 @@ void ConsoleChat::signUp()
 	cin >> password;
 	cout << "Enter your name: ";
 	cin >> name;
-	
+
 	if (getUserByLogin(login) || login == "all")
 	{
 		throw LoginException();
 	};
-	
+
 	User user = User(login, password, name);
 	_user.push_back(user);
 	_onlineUser = make_shared<User>(user);
@@ -165,14 +169,14 @@ void ConsoleChat::sendMessage()
 
 void ConsoleChat::chatMenu()
 {
-	
-	cout << "Welcome " << _onlineUser->getLogin() << "\n";
+
+	cout << "Welcome " << _onlineUser->getName() << "\n";
 	while (_onlineUser)
 	{
 		cout << "Choose an action: \n"
 			<< "1-Group chat \n"
-			<< "2-Write a private message \n"
-			<< "3-Exit \n" ;
+			<< "2-Write a message \n"
+			<< "3-Exit \n";
 		string str;
 		char action;
 
@@ -199,5 +203,16 @@ void ConsoleChat::chatMenu()
 			break;
 		}
 	}
+}
+
+void ConsoleChat::showAllUserNames() const
+{
+	cout << "List of usernames: " << endl;
+	for (auto& user : _user)
+	{
+		cout << user.getName() << endl;
+	}
+	cout << "End of list" << endl;
+
 }
 

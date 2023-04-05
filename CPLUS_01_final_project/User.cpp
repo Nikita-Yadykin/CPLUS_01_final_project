@@ -1,6 +1,6 @@
 #include"User.h"
 
-User::User(const string login, string password, string name): _login(login), _password(password), _name(name)
+User::User(const string& login, string& password, string& name) : _login(login), _password(password), _name(name)
 {
 }
 

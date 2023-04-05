@@ -1,6 +1,6 @@
 #include"Message.h"
 
-Message::Message(const string sender, const string recipient, const string letter) : _sender(sender), _recipient(recipient), _letter(letter)
+Message::Message(const string& sender, const string& recipient, const string& letter) : _sender(sender), _recipient(recipient), _letter(letter)
 {
 }
 

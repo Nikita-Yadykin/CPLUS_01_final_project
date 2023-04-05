@@ -5,7 +5,7 @@ class Message
 {
 public:
 
-	Message(const string sender, const string recipient, const string letter);
+	Message(const string& sender, const string& recipient, const string& letter);
 	~Message() = default;
 
 	string getSender() const;

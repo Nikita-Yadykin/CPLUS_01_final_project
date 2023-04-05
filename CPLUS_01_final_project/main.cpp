@@ -1,22 +1,20 @@
 #include"ConsoleÑhat.h"
 
 
-int main() {
-
-	
-
+auto main() -> int
+{
 	ConsoleChat ConsoleChat;
 
 	ConsoleChat.start();
-	
+
 	while (ConsoleChat.ñhatStarted())
 	{
 		ConsoleChat.startMenu();
-		
-			while (ConsoleChat.getOnlineUser())
-			{
-				ConsoleChat.chatMenu();
-			}
+
+		while (ConsoleChat.getOnlineUser())
+		{
+			ConsoleChat.chatMenu();
+		}
 	}
 
 	return 0;

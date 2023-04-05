@@ -5,7 +5,7 @@
 class LoginException :public exception
 {
 public:
-	const char *what() const noexcept override
+	const char* what() const noexcept override
 	{
 		return "error: user login already exists ";
 	}
@@ -22,8 +22,8 @@ public:
 	shared_ptr<User> getOnlineUser() const;
 	void chatMenu();
 	void sendMessage();
-	
-	
+
+
 private:
 
 	vector<User> _user;
@@ -32,6 +32,7 @@ private:
 	bool _ñhatStarted = false;
 	shared_ptr<User> getUserByLogin(const string login) const;
 	void openChat() const;
+	void showAllUserNames() const;
 };
 
 
