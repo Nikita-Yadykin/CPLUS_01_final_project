@@ -1,8 +1,15 @@
 #pragma once
-
 #include<vector>
 #include<memory>
 #include"Message.h"
+class LoginException :public exception
+{
+public:
+	const char *what() const noexcept override
+	{
+		return "error: user login already exists ";
+	}
+};
 
 class ConsoleChat
 {
@@ -15,6 +22,7 @@ public:
 	shared_ptr<User> getOnlineUser() const;
 	void chatMenu();
 	void sendMessage();
+	
 	
 private:
 
