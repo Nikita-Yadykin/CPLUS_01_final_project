@@ -10,9 +10,9 @@ public:
 	User(const string& login, string& password, string& name);
 	~User() = default;
 
-	string getLogin() const;
-	string getPassword() const;
-	string getName() const;
+	string getLogin() const; // Получить логин
+	string getPassword() const; // Получить пароль
+	string getName() const; // Получить имя
 
 private:
 

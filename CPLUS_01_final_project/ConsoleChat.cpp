@@ -2,6 +2,7 @@
 #include<iostream>
 #include <windows.h>
 using namespace std;
+
 bool ConsoleChat::сhatStarted() const
 {
 	return _сhatStarted;
@@ -12,8 +13,7 @@ void ConsoleChat::start()
 	_сhatStarted = true;
 }
 
-
-void ConsoleChat::startMenu()
+void ConsoleChat::startMenu() // Стартовое меню, отображается при запуске
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, 10);
@@ -21,8 +21,7 @@ void ConsoleChat::startMenu()
 		<< "Choose an action to continue: \n\n"
 		<< "1-Register\n"
 		<< "2-Enter chat\n"
-		<< "3-Output the user names\n"
-		<< "4-Leave the chat" << endl;
+		<< "3-Leave the chat\n";
 	string str;
 	char action;
 
@@ -37,17 +36,14 @@ void ConsoleChat::startMenu()
 	{
 	case '1':
 		SetConsoleTextAttribute(hConsole, 10);
-		signUp();
+		signUp(); // Зарегистрироваться
 		break;
 	case '2':
 		SetConsoleTextAttribute(hConsole, 11);
-		logIn();
+		logIn(); // Войти
 		break;
 	case '3':
-		showAllUserNames();
-		break;
-	case '4':
-		_сhatStarted = false;
+		_сhatStarted = false; // Выход из чата
 		SetConsoleTextAttribute(hConsole, 15);
 		break;
 	default:
@@ -58,14 +54,12 @@ void ConsoleChat::startMenu()
 
 };
 
-
-
 shared_ptr<User> ConsoleChat::getUserByLogin(const string login) const
 {
-	for (auto& user : _user)
+	for (auto& user : _user) // Перебираем vector пользователй
 	{
-		if (login == user.getLogin())
-			return make_shared<User>(user);
+		if (login == user.getLogin()) // Если введенный логин совпал с логином одного из пользователей
+			return make_shared<User>(user); // Возвращаем указатель на этого пользователя
 	}
 	return nullptr;
 }
@@ -75,7 +69,7 @@ shared_ptr<User>  ConsoleChat::getOnlineUser() const
 	return _onlineUser;
 }
 
-void ConsoleChat::logIn()
+void ConsoleChat::logIn() // Вход в чат
 {
 	string login;
 	string password;
@@ -85,11 +79,11 @@ void ConsoleChat::logIn()
 	cout << "Enter password: ";
 	cin >> password;
 
-	_onlineUser = getUserByLogin(login);
+	_onlineUser = getUserByLogin(login); // Указатель на онлайн пользователя получает указатель на пользователя с указанным логином
 
-	if (_onlineUser == nullptr || password != _onlineUser->getPassword())
+	if (_onlineUser == nullptr || password != _onlineUser->getPassword()) // Если нет онлайн пользователя или указанный пароль не равен паролю онлайн пользователя
 	{
-		_onlineUser = nullptr;
+		_onlineUser = nullptr; // Сообщаем, что онлайн пользователь отсутсвует
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, 12);
 		cout << "Invalid login or password, please try again\n";
@@ -97,7 +91,7 @@ void ConsoleChat::logIn()
 	}
 }
 
-void ConsoleChat::signUp()
+void ConsoleChat::signUp() // Регистрация
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, 14);
@@ -110,68 +104,89 @@ void ConsoleChat::signUp()
 	cout << "Enter your name: ";
 	cin >> name;
 
-	if (getUserByLogin(login) || login == "all")
+	try
 	{
-		throw LoginException();
-	};
+		if (getUserByLogin(login) || login == "all") // Если пользователь с таким логином существует или логин = all
+		{
+			throw LoginException("error: "); // Уникальность логина
+		};
+	}
 
-	User user = User(login, password, name);
-	_user.push_back(user);
-	_onlineUser = make_shared<User>(user);
-	cout << endl << "Congratulations! You have successfully registered!\n";
+	catch (const LoginException& ex) // Ловим выброшенное исключение
+	{
+		SetConsoleTextAttribute(hConsole, 12);
+		cerr << "\n\n (" << ex.what() << ") \n\n"; // Вызываем метод what()
+		SetConsoleTextAttribute(hConsole, 15);
+		return;
+	}
+
+	User user = User(login, password, name); // Создаем нового пользователя
+	_user.push_back(user); // Добавляем нового пользователя в vector пользователей
+	_onlineUser = make_shared<User>(user); // Новый пользователь становится онлайн пользователем
+	cout << "\nCongratulations! You have successfully registered!\n";
 }
-void ConsoleChat::openChat() const
+
+void ConsoleChat::openChat() const // Просмотр чата и списка пользователей
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, 11);
-	std::string sender, recipient;
-	std::cout << " -----------chat-------  \n";
-	for (auto& message : _message)
-	{
-		if (_onlineUser->getLogin() == message.getSender() || _onlineUser->getLogin() == message.getRecipient() || message.getRecipient() == "all")
-		{
-			sender = (_onlineUser->getLogin() == message.getSender()) ? _onlineUser->getLogin() : getUserByLogin(message.getSender())->getName();
+	string sender, recipient;
 
-			if (message.getRecipient() == "all")
+	cout << "-------users chatting online-----\n";
+	cout << "login  \t\t  name  \n";
+	cout << "\n---------------------------------\n";
+	for (auto& user : _user) // Перебираем пользователей
+		cout << user.getLogin() << "\t  --- \t " << user.getName() << "\n"; // Выводим логин и имя пользователя
+	cout << "\n--------messages-----------------\n\n";
+	cout << " -----------chat-------  \n";
+
+	for (auto& message : _message) // Перебираем vector сообщений
+	{
+		if (_onlineUser->getLogin() == message.getSender() || _onlineUser->getLogin() == message.getRecipient() || message.getRecipient() == "all") // Если логин онлайн пользователя равен логину отправителя или логину получателя или равен "all"
+		{
+			sender = (_onlineUser->getLogin() == message.getSender()) ? _onlineUser->getLogin() : getUserByLogin(message.getSender())->getName(); // Устанавливаем отправителя
+
+			if (message.getRecipient() == "all") // Если сообщение предназначено для всех
 			{
 				recipient = "all";
 			}
-			else
+			else // Если сообщение для конкретного пользователя
 			{
-				recipient = (_onlineUser->getLogin() == message.getRecipient()) ? _onlineUser->getLogin() : getUserByLogin(message.getRecipient())->getName();
+				recipient = (_onlineUser->getLogin() == message.getRecipient()) ? _onlineUser->getLogin() : getUserByLogin(message.getRecipient())->getName(); // Устанавливаем получателя
 			}
-			std::cout << "message from " << sender << ": to " << recipient << "\n";
-			std::cout << " - " << message.getLetter() << " - \n";
+			cout << "message from " << sender << ": to " << recipient << "\n";
+			cout << " - " << message.getLetter() << " - \n";
 		}
 	}
-	std::cout << "---------------------------\n";
+	cout << "---------------------------\n";
 	SetConsoleTextAttribute(hConsole, 15);
-};
-void ConsoleChat::sendMessage()
-{
-	std::string recipient, text;
-	std::cout << "to (login or all) - ";
-	std::cin >> recipient;
-	std::cout << ">> ";
-	std::cin.ignore();
-	getline(cin, text);
-
-	if (!(recipient == "all" || getUserByLogin(recipient))) {
-		std::cout << "error no such user  -- " << recipient << "\n";
-		return;
-	}
-	if (recipient == "all")
-		_message.push_back(Message(_onlineUser->getLogin(), "all", text));
-	else
-		_message.push_back(Message(_onlineUser->getLogin(), getUserByLogin(recipient)->getLogin(), text));
-	std::cout << "message send -  " << recipient << ":\n ";
 }
 
-void ConsoleChat::chatMenu()
+void ConsoleChat::sendMessage() // Написать сообщение
+{
+	string recipient, text;
+	cout << "to (login or all) - ";
+	cin >> recipient; // Указать логин получателя или all
+	cout << ">> ";
+	cin.ignore();
+	getline(cin, text);
+
+	if (!(recipient == "all" || getUserByLogin(recipient))) {  // Если получатель не равен all или не найден логин пользователя
+		cout << "error no such user  -- " << recipient << "\n";
+		return;
+	}
+	if (recipient == "all") // Если сообщение для всех
+		_message.push_back(Message(_onlineUser->getLogin(), "all", text)); // Создаем сообщение для всех
+	else
+		_message.push_back(Message(_onlineUser->getLogin(), getUserByLogin(recipient)->getLogin(), text)); // Создаем сообщение для конкретного пользователя
+	cout << "message send -  " << recipient << ":\n ";
+}
+
+void ConsoleChat::chatMenu() // Меню чата
 {
 
 	cout << "Welcome " << _onlineUser->getName() << "\n";
-	while (_onlineUser)
+	while (_onlineUser) // Пока есть онлайн пользователь
 	{
 		cout << "Choose an action: \n"
 			<< "1-Group chat \n"
@@ -190,29 +205,17 @@ void ConsoleChat::chatMenu()
 		switch (action)
 		{
 		case '1':
-			openChat();
+			openChat(); // Открыть чат
 			break;
 		case '2':
-			sendMessage();
+			sendMessage(); // Написать сообщение
 			break;
 		case '3':
-			_onlineUser = nullptr;
+			_onlineUser = nullptr; // Выход
 			break;
 		default:
-			cout << "Please try again" << endl;
+			cout << "Please try again\n";
 			break;
 		}
 	}
 }
-
-void ConsoleChat::showAllUserNames() const
-{
-	cout << "List of usernames: " << endl;
-	for (auto& user : _user)
-	{
-		cout << user.getName() << endl;
-	}
-	cout << "End of list" << endl;
-
-}
-

@@ -2,13 +2,17 @@
 #include<vector>
 #include<memory>
 #include"Message.h"
-class LoginException :public exception
+
+class LoginException :public exception // Класс исключения наследник от класса exception
 {
 public:
-	const char* what() const noexcept override
+	LoginException(const std::string& msg) :_msg(msg) {}
+	virtual const char* what() const noexcept override // Виртуальный метод what() выводит предупреждение, если логин не уникален
 	{
 		return "error: user login already exists ";
 	}
+private:
+	std::string _msg;
 };
 
 class ConsoleChat
@@ -32,7 +36,7 @@ private:
 	bool _сhatStarted = false;
 	shared_ptr<User> getUserByLogin(const string login) const;
 	void openChat() const;
-	void showAllUserNames() const;
+	
 };
 
 
