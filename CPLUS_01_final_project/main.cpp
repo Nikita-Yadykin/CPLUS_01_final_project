@@ -5,15 +5,15 @@ auto main() -> int
 {
 	ConsoleChat ConsoleChat;
 
-	ConsoleChat.start();
+	ConsoleChat.start(); // Запуск чата
 
-	while (ConsoleChat.сhatStarted())
+	while (ConsoleChat.сhatStarted()) // Пока чат запущен
 	{
-		ConsoleChat.startMenu();
+		ConsoleChat.startMenu(); // Отображать стартовое меню
 
-		while (ConsoleChat.getOnlineUser())
+		while (ConsoleChat.getOnlineUser()) // Пока в системе есть пользователь
 		{
-			ConsoleChat.chatMenu();
+			ConsoleChat.chatMenu(); // Отображать меню чата
 		}
 	}
 
