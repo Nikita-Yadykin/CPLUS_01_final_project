@@ -7,7 +7,7 @@ class User
 {
 public:
 
-	User(const string login, string password, string name);
+	User(const string& login, string& password, string& name);
 	~User() = default;
 
 	string getLogin() const;
