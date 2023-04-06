@@ -39,7 +39,7 @@ void ConsoleChat::startMenu() // Стартовое меню, отображается при запуске
 		signUp(); // Зарегистрироваться
 		break;
 	case '2':
-		SetConsoleTextAttribute(hConsole, 11);
+		
 		logIn(); // Войти
 		break;
 	case '3':
@@ -49,6 +49,7 @@ void ConsoleChat::startMenu() // Стартовое меню, отображается при запуске
 	default:
 		SetConsoleTextAttribute(hConsole, 12);
 		cout << "Please check that the characters you are entering are correct.\n";
+		SetConsoleTextAttribute(hConsole, 11);
 		break;
 	}
 
@@ -94,7 +95,7 @@ void ConsoleChat::logIn() // Вход в чат
 void ConsoleChat::signUp() // Регистрация
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 14);
+	SetConsoleTextAttribute(hConsole, 10);
 	string login, password, name;
 
 	cout << "Please enter your login: ";
@@ -159,11 +160,12 @@ void ConsoleChat::openChat() const // Просмотр чата и списка пользователей
 		}
 	}
 	cout << "---------------------------\n";
-	SetConsoleTextAttribute(hConsole, 15);
+	
 }
 
 void ConsoleChat::sendMessage() // Написать сообщение
 {
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	string recipient, text;
 	cout << "to (login or all) - ";
 	cin >> recipient; // Указать логин получателя или all
@@ -172,7 +174,10 @@ void ConsoleChat::sendMessage() // Написать сообщение
 	getline(cin, text);
 
 	if (!(recipient == "all" || getUserByLogin(recipient))) {  // Если получатель не равен all или не найден логин пользователя
+		
+		SetConsoleTextAttribute(hConsole, 12);
 		cout << "error no such user  -- " << recipient << "\n";
+		SetConsoleTextAttribute(hConsole, 11);
 		return;
 	}
 	if (recipient == "all") // Если сообщение для всех
@@ -184,7 +189,8 @@ void ConsoleChat::sendMessage() // Написать сообщение
 
 void ConsoleChat::chatMenu() // Меню чата
 {
-
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, 11);
 	cout << "Welcome " << _onlineUser->getName() << "\n";
 	while (_onlineUser) // Пока есть онлайн пользователь
 	{
